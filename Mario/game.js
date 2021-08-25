@@ -6,6 +6,9 @@ kaboom({
   clearColor: [0, 0, 1, 1],
 });
 
+const moveSpeed = 120;
+const jumpForce = 360;
+
 loadRoot("https://i.imgur.com/");
 loadSprite("coin", "wbKxhcd.png");
 loadSprite("goomba", "KPO3fR9.png");
@@ -65,13 +68,86 @@ scene("game", () => {
 
   const gameLevel = addLevel(maps, levelCfg);
 
+  let score = 0;
+  const scoreLabel = add([
+    text(score),
+    pos(30, 6),
+    layer("ui"),
+    {
+      value: score,
+    },
+  ]);
+
+  add([text(`level test`), pos(4, 6)]);
+
+  function big() {
+    let isBig = false;
+    return {
+      smallify() {
+        isBig = false;
+        this.scale = vec2(1 * Math.sign(player.scale.x), 1);
+      },
+      biggify() {
+        isBig = true;
+        this.scale = vec2(1.5 * Math.sign(player.scale.x), 2);
+      },
+    };
+  }
+
   const player = add([
     sprite("mario"),
     solid(),
     pos(30, 0),
     body(),
+    big(),
     origin("bot"),
+    scale(vec2(1)),
   ]);
+
+  action("mushroom", (m) => {
+    m.move(-50, 0);
+  });
+
+  player.on("headbump", (obj) => {
+    if (obj.is("coin-surprise")) {
+      gameLevel.spawn("$", obj.gridPos.sub(0, 1));
+      destroy(obj);
+      gameLevel.spawn("}", obj.gridPos.sub(0, 0));
+    }
+    if (obj.is("mushroom-surprise")) {
+      gameLevel.spawn("#", obj.gridPos.sub(0, 1));
+      destroy(obj);
+      gameLevel.spawn("}", obj.gridPos.sub(0, 0));
+    }
+  });
+
+  player.collides("mushroom", (m) => {
+    destroy(m);
+    player.biggify();
+  });
+
+  keyDown("left", () => {
+    player.move(-moveSpeed, 0);
+  });
+
+  keyPress("left", () => {
+    player.scale.x =
+      Math.sign(player.scale.x) === -1 ? player.scale.x : player.scale.x * -1;
+  });
+
+  keyDown("right", () => {
+    player.move(moveSpeed, 0);
+  });
+
+  keyPress("right", () => {
+    player.scale.x = Math.abs(player.scale.x);
+  });
+
+  keyPress("space", () => {
+    if (player.grounded()) {
+      player.jump(jumpForce);
+    }
+  });
 });
 
 start("game");
