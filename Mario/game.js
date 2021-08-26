@@ -3,11 +3,14 @@ kaboom({
   fullscreen: true,
   scale: 2,
   debug: true,
+  crisp: true,
   clearColor: [0, 0, 1, 1],
 });
 
 const moveSpeed = 120;
-const jumpForce = 360;
+const smallJumpForce = 360;
+let currentJumpForce = smallJumpForce;
+const bigBumpForce = 460;
 
 loadRoot("https://i.imgur.com/");
 loadSprite("coin", "wbKxhcd.png");
@@ -43,12 +46,13 @@ scene("game", () => {
     "                            -+        ",
     "                    ^   ^   ()        ",
     "==============================   =====",
+    "==============================   =====",
   ];
 
   const levelCfg = {
     width: 20,
     height: 20,
-    "=": [sprite("block"), solid()],
+    "=": [sprite("block"), solid(), "block"],
     $: [sprite("coin"), "coin"],
     "%": [sprite("surprise"), solid(), "coin-surprise"],
     "*": [sprite("surprise"), solid(), "mushroom-surprise"],
@@ -68,21 +72,86 @@ scene("game", () => {
 
   const gameLevel = addLevel(maps, levelCfg);
 
-  let score = 0;
+  add([text(`MARIO`), pos(4, 6)]);
+  let scoreZeroPlaceholders = "000000";
+  function addToScore(add) {
+    if (scoreLabel.value < 999999) {
+      scoreLabel.value += add;
+      scoreLabel.text =
+        scoreZeroPlaceholders.slice(0, scoreLabel.value.toString().length) +
+        scoreLabel.value;
+    }
+  }
+
   const scoreLabel = add([
-    text(score),
-    pos(30, 6),
+    text(scoreZeroPlaceholders),
+    pos(4, 16),
     layer("ui"),
     {
-      value: score,
+      value: 0,
     },
   ]);
 
-  add([text(`level test`), pos(4, 6)]);
+  const coinLabelImage = add([sprite("coin"), pos(100, 15), scale(0.65)]);
+  const coinLabel = add([
+    text(" x00"),
+    pos(105, 16),
+    layer("ui"),
+    {
+      value: 0,
+    },
+  ]);
+
+  function addToCoinCount() {
+    if (coinLabel.value < 99) {
+      coinLabel.value++;
+      coinLabel.text = ` x${coinLabel.value.toString().length <= 1 ? "0" : ""}${
+        coinLabel.value
+      }`;
+    } else {
+      coinLabel.value = 0;
+      coinLabel.text = " x00";
+      //addExtraLife()
+    }
+  }
+
+  add([text(`World`), pos(200, 6)]);
+  let world = " 1-1";
+  add([text(world), pos(200, 16)]);
+
+  add([text(`Time`), pos(305, 6)]);
+  const timeLabel = add([
+    text(" 300"),
+    pos(305, 16),
+    layer("ui"),
+    {
+      value: 300,
+    },
+  ]);
+
+  function subtractTime() {
+    timeLabel.value--;
+    timeLabel.text = ` ${timeLabel.value}`;
+  }
+
+  loop(1, () => {
+    subtractTime();
+  });
 
   function big() {
     let isBig = false;
     return {
+      update() {
+        if (isBig) {
+          currentJumpForce = bigBumpForce;
+        }
+        if (!isBig) {
+          currentJumpForce = smallJumpForce;
+        }
+      },
+      isBig() {
+        return isBig;
+      },
       smallify() {
         isBig = false;
         this.scale = vec2(1 * Math.sign(player.scale.x), 1);
@@ -119,11 +188,21 @@ scene("game", () => {
       destroy(obj);
       gameLevel.spawn("}", obj.gridPos.sub(0, 0));
     }
+    if (obj.is("block") && player.isBig()) {
+      destroy(obj);
+    }
   });
 
   player.collides("mushroom", (m) => {
     destroy(m);
     player.biggify();
+    addToScore(200);
+  });
+
+  player.collides("coin", (c) => {
+    destroy(c);
+    addToScore(100);
+    addToCoinCount();
   });
 
   keyDown("left", () => {
@@ -145,7 +224,15 @@ scene("game", () => {
 
   keyPress("space", () => {
     if (player.grounded()) {
-      player.jump(jumpForce);
+      //gravity(980);
+      player.jump(currentJumpForce);
+    }
+  });
+
+  keyRelease("space", () => {
+    if (!player.grounded()) {
+      player.jump(-(currentJumpForce / 4));
+      //gravity(3000);
     }
   });
 });
