@@ -129,8 +129,8 @@ scene("game", () => {
 
   add([text(`Time`), pos(315, 6), layer("ui")]);
   const timeLabel = add([
-    text(" 310"),
-    pos(305, 16),
+    text(" 300"),
+    pos(315, 16),
     layer("ui"),
     {
       value: 300,
