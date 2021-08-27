@@ -44,8 +44,6 @@ scene("game", () => {
     "                                      ",
     "                                      ",
     "                                      ",
-    "                                      ",
-    "                                      ",
     "     %   =*=%=                        ",
     "                                      ",
     "                            -+        ",
@@ -77,7 +75,7 @@ scene("game", () => {
 
   const gameLevel = addLevel(maps, levelCfg);
 
-  add([text(`MARIO`), pos(4, 6)]);
+  add([text(`MARIO`), pos(10, 6), layer("ui")]);
   let scoreZeroPlaceholders = "000000";
   function addToScore(add) {
     if (scoreLabel.value < 999999) {
@@ -90,17 +88,22 @@ scene("game", () => {
 
   const scoreLabel = add([
     text(scoreZeroPlaceholders),
-    pos(4, 16),
+    pos(10, 16),
     layer("ui"),
     {
       value: 0,
     },
   ]);
 
-  const coinLabelImage = add([sprite("coin"), pos(100, 15), scale(0.65)]);
+  const coinLabelImage = add([
+    sprite("coin"),
+    pos(110, 15),
+    scale(0.65),
+    layer("ui"),
+  ]);
   const coinLabel = add([
     text(" x00"),
-    pos(105, 16),
+    pos(115, 16),
     layer("ui"),
     {
       value: 0,
@@ -120,13 +123,13 @@ scene("game", () => {
     }
   }
 
-  add([text(`World`), pos(200, 6)]);
+  add([text(`World`), pos(210, 6), layer("ui")]);
   let world = " 1-1";
-  add([text(world), pos(200, 16)]);
+  add([text(world), pos(210, 16), layer("ui")]);
 
-  add([text(`Time`), pos(305, 6)]);
+  add([text(`Time`), pos(315, 6), layer("ui")]);
   const timeLabel = add([
-    text(" 300"),
+    text(" 310"),
     pos(305, 16),
     layer("ui"),
     {
@@ -180,6 +183,14 @@ scene("game", () => {
 
   action("mushroom", (m) => {
     m.move(-50, 0);
+  });
+
+  camIgnore(["ui"]);
+  camPos(width() / 2, height() / 2);
+  player.action(() => {
+    if (player.pos.x >= width() / 2) {
+      camPos(player.pos.x, height() / 2);
+    }
   });
 
   player.on("headbump", (obj) => {
@@ -242,25 +253,41 @@ scene("game", () => {
   });
 });
 
-loadSprite(
-  "startScreen",
-  "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Super_Mario_Bros._Logo.svg/1280px-Super_Mario_Bros._Logo.svg.png"
-);
+// ======================================= Start Screen
+const startImage =
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Super_Mario_Bros._Logo.svg/1280px-Super_Mario_Bros._Logo.svg.png";
+
+let startImageWidth = "";
+
+const img = new Image();
+img.onload = function () {
+  startImageWidth = this.width * 0.25;
+  startImageHeight = this.height * 0.25;
+};
+img.src = startImage;
+
+loadSprite("startScreen", startImage);
+
+start;
 
 scene("Start", () => {
   const background = add([
     sprite("startScreen"),
     layer("bg"),
-    pos(20, 20),
+    pos((width() - startImageWidth) / 2, 20),
     scale(0.25),
   ]);
 
-  console.log(screen.width);
-
-  add([text(`Press Enter to Start`), pos(90, 155)]);
+  var startText = "Press Enter to Start";
+  add([
+    text(startText, 8),
+    pos((width() - startText.length * 8) / 2, startImageHeight + 40),
+  ]);
   keyPress("enter", () => {
     go("game");
   });
 });
+
+// ======================================= Load Game
 
 start("Start");
