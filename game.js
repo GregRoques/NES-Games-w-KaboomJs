@@ -258,8 +258,8 @@ const startImage =
   "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Super_Mario_Bros._Logo.svg/1280px-Super_Mario_Bros._Logo.svg.png";
 
 let startImageWidth = "";
-let startImageHeight = ";
-"
+let startImageHeight = "";
+
 const img = new Image();
 img.onload = function () {
   startImageWidth = this.width * 0.25;
