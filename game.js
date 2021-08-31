@@ -4,7 +4,7 @@ kaboom({
   scale: 2,
   debug: true,
   crisp: true,
-  clearColor: [0, 0, 1, 1],
+  clearColor: [0, 0, 0, 0],
 });
 
 const moveSpeed = 120;
