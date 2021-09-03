@@ -1,16 +1,22 @@
-scene("gameover", (lives, level, score) => {
+scene("gameover", (lives, level, score, coins) => {
   var setBgColor = document.getElementById("container");
   setBgColor.style.backgroundColor = "black";
   if (lives > 0) {
-    // display lives and current level
+    add([
+      text(
+        `Level: ${level}, Lives: ${lives}, score: ${score}, coins: ${coins}`
+      ),
+      origin("center"),
+      pos(width() / 2, height() / 2),
+    ]);
     setTimeout(() => {
-      go("game", lives, level, score);
+      go("game", lives, level, score, coins);
     }, 5000);
   }
   if (lives < 1) {
-    //display gameover and score
+    add([text("Game Over"), origin("center"), pos(width() / 2, height() / 2)]);
     setTimeout(() => {
       go("Start");
-    }, 10000);
+    }, 5000);
   }
 });

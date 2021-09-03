@@ -11,16 +11,14 @@ const moveSpeed = 120;
 const smallJumpForce = 360;
 let currentJumpForce = smallJumpForce;
 const bigBumpForce = 460;
+const Fall_Death = height();
 
-scene("game", (lives = 3, level = "1-1", startScore = 0) => {
+scene("game", (lives = 3, level = "1-1", startScore = 0, coins = 0) => {
   layers(["bg", "obj", "ui"], "obj");
+
   var setBgColor = document.getElementById("container");
   if (level === "1-1") {
     setBgColor.style.backgroundColor = "rgb(93,148,251)";
-  }
-
-  if (level === "1-2") {
-    setBgColor.style.backgroundColor = "black";
   }
 
   const maps = [
@@ -69,13 +67,12 @@ scene("game", (lives = 3, level = "1-1", startScore = 0) => {
     if (scoreLabel.value < 999999) {
       scoreLabel.value += add;
       scoreLabel.text =
-        scoreZeroPlaceholders.slice(0, scoreLabel.value.toString().length) +
+        scoreZeroPlaceholders.slice(scoreLabel.value.toString().length) +
         scoreLabel.value;
     }
   }
-
   const scoreLabel = add([
-    text(scoreZeroPlaceholders),
+    text("000000".slice(startScore.toString().length) + startScore),
     pos(10, 16),
     layer("ui"),
     {
@@ -90,11 +87,11 @@ scene("game", (lives = 3, level = "1-1", startScore = 0) => {
     layer("ui"),
   ]);
   const coinLabel = add([
-    text(" x00"),
+    text(` x${coins.toString().length <= 1 ? "0" : ""}${coins}`),
     pos(115, 16),
     layer("ui"),
     {
-      value: 0,
+      value: coins,
     },
   ]);
 
@@ -159,6 +156,11 @@ scene("game", (lives = 3, level = "1-1", startScore = 0) => {
     };
   }
 
+  function playerDeath() {
+    lives--;
+    go("gameover", lives, level, scoreLabel.value, coinLabel.value);
+  }
+
   const player = add([
     sprite("mario"),
     solid(),
@@ -194,6 +196,12 @@ scene("game", (lives = 3, level = "1-1", startScore = 0) => {
     }
     if (obj.is("block") && player.isBig()) {
       destroy(obj);
+    }
+  });
+
+  player.action(() => {
+    if (player.pos.y > Fall_Death) {
+      playerDeath();
     }
   });
 
