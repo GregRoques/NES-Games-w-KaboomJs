@@ -12,8 +12,16 @@ const smallJumpForce = 360;
 let currentJumpForce = smallJumpForce;
 const bigBumpForce = 460;
 
-scene("game", () => {
+scene("game", (lives = 3, level = "1-1", startScore = 0) => {
   layers(["bg", "obj", "ui"], "obj");
+  var setBgColor = document.getElementById("container");
+  if (level === "1-1") {
+    setBgColor.style.backgroundColor = "rgb(93,148,251)";
+  }
+
+  if (level === "1-2") {
+    setBgColor.style.backgroundColor = "black";
+  }
 
   const maps = [
     "                                      ",
@@ -71,7 +79,7 @@ scene("game", () => {
     pos(10, 16),
     layer("ui"),
     {
-      value: 0,
+      value: startScore,
     },
   ]);
 
@@ -104,7 +112,7 @@ scene("game", () => {
   }
 
   add([text(`World`), pos(210, 6), layer("ui")]);
-  let world = " 1-1";
+  let world = ` ${level}`;
   add([text(world), pos(210, 16), layer("ui")]);
 
   add([text(`Time`), pos(315, 6), layer("ui")]);

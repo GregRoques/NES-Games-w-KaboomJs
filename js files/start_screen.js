@@ -15,6 +15,8 @@ img.src = startImage;
 loadSprite("startScreen", startImage);
 
 scene("Start", () => {
+  var setBgColor = document.getElementById("container");
+  setBgColor.style.backgroundColor = "rgb(93,148,251)";
   const background = add([
     sprite("startScreen"),
     layer("bg"),
