@@ -16,6 +16,8 @@ const Fall_Death = height();
 scene("game", (lives = 3, level = "1-1", startScore = 0, coins = 0) => {
   layers(["bg", "obj", "ui"], "obj");
 
+  //const music = play("mainThem");
+
   var setBgColor = document.getElementById("container");
   if (level === "1-1") {
     setBgColor.style.backgroundColor = "rgb(93,148,251)";
@@ -123,13 +125,17 @@ scene("game", (lives = 3, level = "1-1", startScore = 0, coins = 0) => {
   ]);
 
   function subtractTime() {
+    // if (timeLabel.value === 100) {
+    //   music.stop();
+    //   play("timeAlmostUp");
+    //   setTimeout(()=>{
+    //     music.speed(2)
+    //     music.play()
+    //   })
+    // }
     timeLabel.value--;
     timeLabel.text = ` ${timeLabel.value}`;
   }
-
-  loop(1, () => {
-    subtractTime();
-  });
 
   function big() {
     let isBig = false;
@@ -156,11 +162,6 @@ scene("game", (lives = 3, level = "1-1", startScore = 0, coins = 0) => {
     };
   }
 
-  function playerDeath() {
-    lives--;
-    go("gameover", lives, level, scoreLabel.value, coinLabel.value);
-  }
-
   const player = add([
     sprite("mario"),
     solid(),
@@ -170,6 +171,26 @@ scene("game", (lives = 3, level = "1-1", startScore = 0, coins = 0) => {
     origin("bot"),
     scale(vec2(1)),
   ]);
+
+  let isPlayer = true;
+  function playerDeath() {
+    //play("playerDies");
+    isPlayer = false;
+    destroy(player);
+    setTimeout(() => {
+      lives--;
+      go("gameover", lives, level, scoreLabel.value, coinLabel.value);
+    }, 2000);
+  }
+
+  loop(1, () => {
+    if (timeLabel.value !== 0 && isPlayer) {
+      subtractTime();
+    }
+    if (timeLabel.value === 0 && isPlayer) {
+      playerDeath();
+    }
+  });
 
   action("mushroom", (m) => {
     m.move(-50, 0);

@@ -1,3 +1,5 @@
+// ============================================================================== Sprites
+
 // NOTE: Start Screen Sprite in "start_screen.js" spript
 
 //loadRoot("https://i.imgur.com/");
@@ -28,3 +30,7 @@ loadSprite("blue-brick", "https://i.imgur.com/3e5YRQd.png");
 loadSprite("blue-steel", "https://i.imgur.com/gqVoI2b.png");
 loadSprite("blue-goomba", "https://i.imgur.com/SvV4ueD.png");
 loadSprite("blue-surprise", "https://i.imgur.com/RMqCc1G.png");
+
+// ============================================================================== Sounds
+
+//loadSound("playerDies", "../sprites_and_sounds/sounds/smb_mariodie.wav");
