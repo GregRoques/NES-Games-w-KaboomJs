@@ -16,7 +16,7 @@ loadSprite("startScreen", startImage);
 
 let highScore = "";
 async function getHighScore() {
-  await fetch("http://localhost:3000", {
+  await fetch("http://localhost:2000/highScore", {
     method: "GET",
   })
     .then((response) => {
