@@ -1,44 +1,51 @@
-import { updateGround, setupGround } from "./ground.js"
-import { updateDino, setupDino, getDinoRect, setDinoLose } from "./dino.js"
-import { updateCactus, setupCactus, getCactusRects } from "./cactus.js"
+import { updateGround, setupGround } from "./ground.js";
+import { updateDino, setupDino, getDinoRect, setDinoLose } from "./dino.js";
+import { updateCactus, setupCactus, getCactusRects } from "./cactus.js";
 
-const WORLD_WIDTH = 100
-const WORLD_HEIGHT = 30
-const SPEED_SCALE_INCREASE = 0.00001
+const WORLD_WIDTH = 100;
+const WORLD_HEIGHT = 30;
+const SPEED_SCALE_INCREASE = 0.00001;
 
-const worldElem = document.querySelector("[data-world]")
-const scoreElem = document.querySelector("[data-score]")
-const startScreenElem = document.querySelector("[data-start-screen]")
+const worldElem = document.querySelector("[data-world]");
+const scoreElem = document.querySelector("[data-score]");
+const startScreenElem = document.querySelector("[data-start-screen]");
 
-setPixelToWorldScale()
-window.addEventListener("resize", setPixelToWorldScale)
-document.addEventListener("keydown", handleStart, { once: true })
+setPixelToWorldScale();
+window.addEventListener("resize", setPixelToWorldScale);
+document.addEventListener("keydown", handleStart, { once: true });
 
-let lastTime
-let speedScale
-let score
+let lastTime;
+let speedScale;
+let score;
 function update(time) {
   if (lastTime == null) {
-    lastTime = time
-    window.requestAnimationFrame(update)
-    return
+    lastTime = time;
+    window.requestAnimationFrame(update);
+    return;
   }
-  const delta = time - lastTime
 
-  updateGround(delta, speedScale)
-  updateDino(delta, speedScale)
-  updateCactus(delta, speedScale)
-  updateSpeedScale(delta)
-  updateScore(delta)
-  if (checkLose()) return handleLose()
+  // delta captures the time between frames
+  const delta = time - lastTime;
 
-  lastTime = time
-  window.requestAnimationFrame(update)
+  updateGround(delta, speedScale);
+  updateDino(delta, speedScale);
+  updateCactus(delta, speedScale);
+  // gradually increases speedScale
+  updateSpeedScale(delta);
+  // updates score based on each milisecond that passes
+  updateScore(delta);
+  if (checkLose()) return handleLose();
+
+  lastTime = time;
+  // requestAnimationFrame() only calls update function next time we can change content on screen;
+  // bases this on refresh rate of monitor
+  // takes a callback as an argument to be invoked before the next repaint.
+  window.requestAnimationFrame(update);
 }
 
 function checkLose() {
-  const dinoRect = getDinoRect()
-  return getCactusRects().some(rect => isCollision(rect, dinoRect))
+  const dinoRect = getDinoRect();
+  return getCactusRects().some((rect) => isCollision(rect, dinoRect));
 }
 
 function isCollision(rect1, rect2) {
@@ -47,45 +54,50 @@ function isCollision(rect1, rect2) {
     rect1.top < rect2.bottom &&
     rect1.right > rect2.left &&
     rect1.bottom > rect2.top
-  )
+  );
 }
 
 function updateSpeedScale(delta) {
-  speedScale += delta * SPEED_SCALE_INCREASE
+  speedScale += delta * SPEED_SCALE_INCREASE;
 }
 
 function updateScore(delta) {
-  score += delta * 0.01
-  scoreElem.textContent = Math.floor(score)
+  score += delta * 0.01; // equivalent of 10 points each second
+  // makse sure it is not a decimal
+  scoreElem.textContent = Math.floor(score);
 }
 
 function handleStart() {
-  lastTime = null
-  speedScale = 1
-  score = 0
-  setupGround()
-  setupDino()
-  setupCactus()
-  startScreenElem.classList.add("hide")
-  window.requestAnimationFrame(update)
+  lastTime = null;
+  speedScale = 1;
+  score = 0;
+  setupGround();
+  setupDino();
+  setupCactus();
+  // hides start screen instructions
+  startScreenElem.classList.add("hide");
+  // starts the animation
+  window.requestAnimationFrame(update);
 }
 
 function handleLose() {
-  setDinoLose()
+  setDinoLose();
   setTimeout(() => {
-    document.addEventListener("keydown", handleStart, { once: true })
-    startScreenElem.classList.remove("hide")
-  }, 100)
+    // once: true limits you to one "key down" on event listender
+    document.addEventListener("keydown", handleStart, { once: true });
+    startScreenElem.classList.remove("hide");
+  }, 100);
 }
 
+// ============================================ resizes world (entire project) based on browser size
 function setPixelToWorldScale() {
-  let worldToPixelScale
+  let worldToPixelScale;
   if (window.innerWidth / window.innerHeight < WORLD_WIDTH / WORLD_HEIGHT) {
-    worldToPixelScale = window.innerWidth / WORLD_WIDTH
+    worldToPixelScale = window.innerWidth / WORLD_WIDTH;
   } else {
-    worldToPixelScale = window.innerHeight / WORLD_HEIGHT
+    worldToPixelScale = window.innerHeight / WORLD_HEIGHT;
   }
 
-  worldElem.style.width = `${WORLD_WIDTH * worldToPixelScale}px`
-  worldElem.style.height = `${WORLD_HEIGHT * worldToPixelScale}px`
+  worldElem.style.width = `${WORLD_WIDTH * worldToPixelScale}px`;
+  worldElem.style.height = `${WORLD_HEIGHT * worldToPixelScale}px`;
 }
