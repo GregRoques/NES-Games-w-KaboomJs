@@ -1,9 +1,9 @@
-# Exploring Coding Games for the Browser:
+# Super Mario Bros. 1-1:
 
-## Tutorials:
+## Description:
 
-**Flappy Bird:** https://www.youtube.com/watch?v=Jgst0rihJ3o&t=350s
+- Recreating level one of SMB 1 (1985) using Kaboom.js
 
-**Dino Run:** https://www.youtube.com/watch?v=47eXVRJKdkU&t=182s
+**Tutorial:** https://www.youtube.com/watch?v=2nucjefSr6I
 
-**Mario:** https://www.youtube.com/watch?v=2nucjefSr6I
+**Docs:** https://kaboomjs.com/
