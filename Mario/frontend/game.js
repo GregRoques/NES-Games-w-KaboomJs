@@ -119,9 +119,7 @@ loadSprite("blue-steel", "https://i.imgur.com/gqVoI2b.png");
 loadSprite("blue-goomba", "https://i.imgur.com/SvV4ueD.png");
 loadSprite("blue-surprise", "https://i.imgur.com/RMqCc1G.png");
 
-// ===== load Sounds
-
-//loadSound("playerDies", "../sprites_and_sounds/sounds/smb_mariodie.wav");
+// ===== load sprites (for in game play) end
 
 const moveSpeed = 120;
 const smallJumpForce = 360;
@@ -131,8 +129,6 @@ const Fall_Death = height();
 
 scene("game", (lives = 3, level = "1-1", startScore = 0, coins = 0) => {
   layers(["bg", "obj", "ui"], "obj");
-
-  //const music = play("mainThem");
 
   var setBgColor = document.getElementById("container");
   if (level === "1-1") {
@@ -241,14 +237,6 @@ scene("game", (lives = 3, level = "1-1", startScore = 0, coins = 0) => {
   ]);
 
   function subtractTime() {
-    // if (timeLabel.value === 100) {
-    //   music.stop();
-    //   play("timeAlmostUp");
-    //   setTimeout(()=>{
-    //     music.speed(2)
-    //     music.play()
-    //   })
-    // }
     timeLabel.value--;
     timeLabel.text = ` ${timeLabel.value}`;
   }
@@ -290,7 +278,6 @@ scene("game", (lives = 3, level = "1-1", startScore = 0, coins = 0) => {
 
   let isPlayer = true;
   function playerDeath() {
-    //play("playerDies");
     isPlayer = false;
     destroy(player);
     setTimeout(() => {
