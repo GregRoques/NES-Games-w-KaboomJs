@@ -7,6 +7,122 @@ kaboom({
   clearColor: [0, 0, 0, 0],
 });
 
+// =================================================================================== Start Screen
+
+// ===== load sprites
+const startImage =
+  "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2b/Super_Mario_Bros._Logo.svg/1280px-Super_Mario_Bros._Logo.svg.png";
+
+loadSprite("startScreen", startImage);
+
+let startImageWidth = "";
+let startImageHeight = "";
+
+const img = new Image();
+img.onload = function () {
+  startImageWidth = this.width * 0.25;
+  startImageHeight = this.height * 0.25;
+};
+img.src = startImage;
+
+// ===== Function to Get High Score
+let highScore = "";
+async function getHighScore() {
+  await fetch("http://localhost:2000/highScore", {
+    method: "GET",
+  })
+    .then((response) => {
+      if (response.ok) {
+        highScore = response.body.data;
+        return true;
+      }
+    })
+    .catch((err) => {
+      console.log(`Could not fetch high score: ${err}`);
+      return false;
+    });
+}
+
+// ===== Begin Scene
+
+scene("Start", async () => {
+  var setBgColor = document.getElementById("container");
+  setBgColor.style.backgroundColor = "rgb(93,148,251)";
+
+  const background = add([
+    sprite("startScreen"),
+    layer("bg"),
+    pos((width() - startImageWidth) / 2, 20),
+    scale(0.25),
+  ]);
+
+  var startText = "Press Enter to Start";
+  add([
+    text(startText, 8),
+    pos((width() - startText.length * 8) / 2, startImageHeight + 40),
+  ]);
+  keyPress("enter", () => {
+    go("game");
+  });
+
+  if ((await getHighScore()) === true) {
+    add([
+      text("HIGH SCORES", 8),
+      pos((width() - startText.length * 8) / 2, startImageHeight + 60),
+    ]);
+
+    highScore.map((score, index) => {
+      let descendingHeight = 70;
+      add([
+        text(`${index + 1}) ${score.initials}—${score.points}`, 8),
+        pos(
+          (width() - startText.length * 8) / 2,
+          startImageHeight + descendingHeight
+        ),
+      ]);
+      descendingHeight += 10;
+    });
+  }
+});
+// =================================================================================== Start Screen End
+
+// =================================================================================== Game Start
+
+// ===== load Sprites
+
+//loadRoot("https://i.imgur.com/");
+
+//player sprites
+loadSprite("mario", "https://i.imgur.com/Wb1qfhK.png");
+
+//brick output/surprises
+loadSprite("coin", "https://i.imgur.com/wbKxhcd.png");
+loadSprite("mushroom", "https://i.imgur.com/0wMd92p.png");
+
+// sprites reocurring on all stages
+loadSprite("surprise", "https://i.imgur.com/gesQ1KP.png");
+loadSprite("unboxed", "https://i.imgur.com/bdrLpi6.png");
+loadSprite("pipe-top-left", "https://i.imgur.com/ReTPiWY.png");
+loadSprite("pipe-top-right", "https://i.imgur.com/hj2GK4n.png");
+loadSprite("pipe-bottom-left", "https://i.imgur.com/c1cYSbt.png");
+loadSprite("pipe-bottom-right", "https://i.imgur.com/nqQ79eI.png");
+
+//Level 1/ overworld sprites
+loadSprite("goomba", "https://i.imgur.com/KPO3fR9.png");
+loadSprite("brick", "https://i.imgur.com/pogC9x5.png");
+loadSprite("block", "https://i.imgur.com/M6rwarW.png");
+
+// Level 2/ underworld sprits
+loadSprite("blue-block", "https://i.imgur.com/fVscIbn.png");
+loadSprite("blue-brick", "https://i.imgur.com/3e5YRQd.png");
+loadSprite("blue-steel", "https://i.imgur.com/gqVoI2b.png");
+loadSprite("blue-goomba", "https://i.imgur.com/SvV4ueD.png");
+loadSprite("blue-surprise", "https://i.imgur.com/RMqCc1G.png");
+
+// ===== load Sounds
+
+//loadSound("playerDies", "../sprites_and_sounds/sounds/smb_mariodie.wav");
+
 const moveSpeed = 120;
 const smallJumpForce = 360;
 let currentJumpForce = smallJumpForce;
@@ -270,6 +386,35 @@ scene("game", (lives = 3, level = "1-1", startScore = 0, coins = 0) => {
   });
 });
 
-// ======================================= Load Game
+// =================================================================================== Game Screen End
+
+// =================================================================================== Game Over Screen Start
+
+scene("gameover", (lives, level, score, coins) => {
+  var setBgColor = document.getElementById("container");
+  setBgColor.style.backgroundColor = "black";
+  if (lives > 0) {
+    add([
+      text(
+        `Level: ${level}, Lives: ${lives}, score: ${score}, coins: ${coins}`
+      ),
+      origin("center"),
+      pos(width() / 2, height() / 2),
+    ]);
+    setTimeout(() => {
+      go("game", lives, level, score, coins);
+    }, 5000);
+  }
+  if (lives < 1) {
+    add([text("Game Over"), origin("center"), pos(width() / 2, height() / 2)]);
+    setTimeout(() => {
+      go("Start");
+    }, 5000);
+  }
+});
+
+// =================================================================================== Game Over Screen End
+
+// =================================================================================== Load Game
 
 start("Start");
