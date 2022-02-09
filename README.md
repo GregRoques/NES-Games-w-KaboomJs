@@ -14,10 +14,8 @@
 
 ## Description:
 
-- Two web games with pure html/css/js
+- Recreating games with pure html/css/js
 
 ## Web Walk-Throughs:
-
-**Flappy Bird:** https://www.youtube.com/watch?v=Jgst0rihJ3o&t=350s
 
 **Dino Run:** https://www.youtube.com/watch?v=47eXVRJKdkU&t=182s
