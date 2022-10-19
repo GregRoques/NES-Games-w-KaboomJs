@@ -7,15 +7,3 @@
 **Tutorial:** https://www.youtube.com/watch?v=2nucjefSr6I
 
 **Docs:** https://kaboomjs.com/
-
----
-
-# Creating Games for the Browser in Vanilla JS:
-
-## Description:
-
-- Recreating games with pure html/css/js
-
-## Web Walk-Throughs:
-
-**Dino Run:** https://www.youtube.com/watch?v=47eXVRJKdkU&t=182s
